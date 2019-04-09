@@ -1,0 +1,104 @@
+﻿@{
+    string msgHubServer = RuPengMessageHub.TestWeb.Controllers.HomeController.msgHubServer;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="@msgHubServer/lib/aspnet/signalr/dist/browser/signalr.js"></script>
+    <script src="@msgHubServer/chatLib.js"></script>
+    <script src="~/lib/axios/dist/axios.js"></script>
+    <script src="~/lib/vue/vue.js"></script>
+    <link href="~/lib/weui/style/weui.css" rel="stylesheet" />
+</head>
+<body>
+    <div id="app">
+        <div class="button-sp-area">
+            <input type="text" v-model="msg" style="width:80vw" /><button v-on:click="sendMsg" style="width:10vw">发送</button>
+        </div>
+        <div class="weui-cells">
+            <div class="weui-cell weui-cell_access" v-for="msg in msgs">
+                <div class="weui-cell__bd">
+                    <p>{{msg.fromUserDisplayName}}:{{msg.content}}</p>
+                </div>
+                <div class="weui-cell__ft">
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        var token = "@Html.Raw(ViewBag.token)";
+        var chatClient = new ChatClient(token, "@msgHubServer");
+        //axios全局设置url公共请求头
+        //axios.defaults.headers.common['Authentication'] = 'Bearer ' + token;
+        var joinGroup = function (groupId) {
+            //返回对象，可以多次then/catch
+            return axios.post('/home/JoinGroup', {
+                token:token,
+                groupId: groupId
+            }).then(function (response) {
+                console.log("joinGroup成功" + response);
+            })
+            .catch(function (error) {
+                console.error("joinGroup失败" + error);
+            });
+        };
+        var sendGroupMessage = function (toGroupId, objectName, content) {
+            return axios.post('/home/SendGroupMessage', {
+                token: token,
+                toGroupId: toGroupId,
+                objectName: objectName,
+                content: content
+            }).then(function (response) {
+                //console.log("SendGroupMessage成功" + response);
+                vue.msg = "";
+            })
+            .catch(function (error) {
+                console.error("SendGroupMessage失败" + error);
+            });
+        };
+
+        var vue = new Vue({
+            el: "#app",
+            data:
+            {
+                msg: "",
+                msgs: [],
+                chatClient:null
+            },
+            mounted: function () {
+                chatClient.start().then(function () {
+                    console.log("chatClient.start成功");
+                    joinGroup("666").then(function () {
+                        console.log("joinGroup成功");
+                        chatClient.getGroupMessages("666");
+                    }).catch(function (e) {
+                        console.error("joinGroup失败" + e);
+                    });
+                }).catch(function (e) {
+                    console.error("chatClient.start失败" + e);
+                });
+
+                chatClient.setOnGroupMessageListener((msg) => {
+                    this.msgs.push(msg);
+                });
+                chatClient.setOnGroupMessagesListener((msgs) => {
+                    for (var i = 0; i < msgs.length; i++) {
+                        var msg = msgs[i];
+                        this.msgs.push(msg);
+                    }
+                });
+            },
+            methods:
+            {
+                sendMsg: function ()
+                {
+                    sendGroupMessage("666", "txt", this.msg);
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

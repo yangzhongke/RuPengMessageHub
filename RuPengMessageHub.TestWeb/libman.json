@@ -1,0 +1,20 @@
+{
+  "version": "1.0",
+  "defaultProvider": "unpkg",
+  "libraries": [
+    {
+      "library": "axios@0.18.0",
+      "destination": "wwwroot/lib/axios/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "vue@2.6.7",
+      "destination": "wwwroot/lib/vue/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "weui@1.1.3",
+      "destination": "wwwroot/lib/weui/"
+    }
+  ]
+}
