@@ -8,7 +8,7 @@ namespace RuPengMessageHub.TestWeb.Controllers
 {
     public class HomeController : Controller
     {
-        public static readonly string msgHubServer = "https://msghub.rupeng.com/";//"http://localhost:11022/"
+        public static readonly string msgHubServer = "http://localhost:11022/";
         public async Task<IActionResult> Index()
         {
             MsgHubClient client = new MsgHubClient(msgHubServer);
