@@ -73,7 +73,7 @@ namespace HubServerLoadTest
                     {
                         await client.SendGroupMessageAsync(token, chatRoomId, "txtMsg","["+Dns.GetHostName()+"]-"+Guid.NewGuid());
                         Console.WriteLine("发送消息完成,taskId=" + taskId);
-                        await Task.Delay(rand.Next(2000, 5000));//不能用Thread.Sleep
+                        await Task.Delay(rand.Next(20000, 50000));//不能用Thread.Sleep
                     }
                     catch (Exception ex)
                     {
