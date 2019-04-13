@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using RuPengMessageHub.DAO;
+using RuPengMessageHub.Server.Helpers;
 using RuPengMessageHub.Server.Settings;
 using System;
 using System.IO;
@@ -66,6 +67,8 @@ namespace RuPengMessageHub.Server
                 .Configure<BearerJWTSettings>(config.GetSection("BearerJWT"))
                 .Configure<CorsSettings>(config.GetSection("Cors"));
             services.AddSingleton<IConfigurationRoot>(config);
+            services.AddSingleton<RedisHelper>();
+            services.AddHostedService<GroupMessageSenderService>();
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddDefaultTokenProviders();
@@ -125,9 +128,6 @@ namespace RuPengMessageHub.Server
                app.UseDeveloperExceptionPage();
            }
 
-            loggerFactory.AddDebug();
-
-
             //Startup.ConfigureServices() is called before Startup.Configure()
             //所以可以在Configure参数中注入，也可以app.ApplicationServices.GetRequiredService<IOptions<CorsSettings>>()
             //手动获取，但是对于读取配置文件必须注入IOptions<CorsSettings>，而不能直接注入CorsSettings
@@ -143,11 +143,7 @@ namespace RuPengMessageHub.Server
                     .AllowCredentials();
             });
 
-           var webSocketOptions = new WebSocketOptions()
-            {
-                KeepAliveInterval = TimeSpan.FromSeconds(120),
-                ReceiveBufferSize = 4 * 1024
-            };
+            var webSocketOptions = new WebSocketOptions();
             foreach(var origin in corsSetting.Value.AllowedOrigins)
             {
                 webSocketOptions.AllowedOrigins.Add(origin);

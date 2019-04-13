@@ -7,6 +7,7 @@ namespace RuPengMessageHub.Server.Models
 {
     public class GroupMessageResp
     {
+        public string Id { get; set; }
         public string TargetGroupId { get; set; }
         public string FromUserId { get; set; }
         public string FromUserDisplayName { get; set; }

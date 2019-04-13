@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Options;
+using RuPengMessageHub.Server.Helpers;
 using RuPengMessageHub.Server.Models;
 using RuPengMessageHub.Server.Settings;
 using RuPengMessageHub.Server.ViewModels;
@@ -22,13 +23,13 @@ namespace RuPengMessageHub.Server.Controllers
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class GroupController : ControllerBase
     {
-        private readonly IHubContext<MessageHub> Context;
-        private readonly IOptions<RedisSetting> redisSetting;
+        private readonly IHubContext<MessageHub> hubContext;
+        private readonly RedisHelper redis;
 
-        public GroupController(IHubContext<MessageHub> hubContext, IOptions<RedisSetting> redisSetting)
+        public GroupController(IHubContext<MessageHub> hubContext, RedisHelper redis)
         {
-            this.Context = hubContext;
-            this.redisSetting = redisSetting;
+            this.hubContext = hubContext;
+            this.redis = redis;
         }
 
         [HttpPost]
@@ -43,11 +44,8 @@ namespace RuPengMessageHub.Server.Controllers
             string groupName = this.HttpContext.User.GetGroupName(req.toGroupId);
             string userDisplayName = this.HttpContext.User.GetUserDisplayName();
             bool containsUserId;
-            using (ConnectionMultiplexer redis = ConnectionMultiplexer.Connect(redisSetting.Value.Configuration))
-            {
-                IDatabase db = redis.GetDatabase(redisSetting.Value.DbId);
-                containsUserId = await db.SetContainsAsync($"{groupName}_Members", userId);
-            }
+            IDatabase db = redis.GetDatabase();
+            containsUserId = await db.SetContainsAsync($"{groupName}_Members", userId);
             //检查用户是否属于这一组
             if (!containsUserId)
             {
@@ -55,19 +53,17 @@ namespace RuPengMessageHub.Server.Controllers
             }
 
             GroupMessageResp msg = new GroupMessageResp();
+            msg.Id = Guid.NewGuid().ToString("N");
             msg.Content = req.content;
             msg.DateTime = DateTime.Now;
             msg.FromUserDisplayName = userDisplayName;
             msg.FromUserId = userId;
             msg.ObjectName = req.objectName;
             msg.TargetGroupId = req.toGroupId;
-
-            await this.Context.Clients.Group(groupName).SendAsync("OnGroupMessage", msg);
-            using (ConnectionMultiplexer redis = ConnectionMultiplexer.Connect(redisSetting.Value.Configuration))
-            {
-                IDatabase db = redis.GetDatabase(redisSetting.Value.DbId);
-                await db.ListLeftPushAsync($"{groupName}_Messages", msg.ToJsonString());
-            }
+            string msgJson = msg.ToJsonString();
+            await db.ListLeftPushAsync($"{groupName}_Messages", msgJson);
+            await db.ListLeftPushAsync($"{groupName}_MessagesWaitToSent", msgJson);
+            await db.SetAddAsync("AllGroupsName", groupName);
         }
 
         [HttpPost]
@@ -80,20 +76,16 @@ namespace RuPengMessageHub.Server.Controllers
             string authentication = this.HttpContext.Request.Headers["Authorization"];
             string token = authentication.Substring("Bearer ".Length);
 
-            //redis连接字符串格式见https://www.cnblogs.com/ArvinZhao/p/6007043.html
-            using (ConnectionMultiplexer redis = ConnectionMultiplexer.Connect(redisSetting.Value.Configuration))
-            {
-                IDatabase db = redis.GetDatabase(redisSetting.Value.DbId);//默认是访问db0数据库，可以通过方法参数指定数字访问不同的数据库
-                string connectionId = await db.StringGetAsync(token + "_ConnectionId");
+            IDatabase db = redis.GetDatabase();
+            string connectionId = await db.StringGetAsync(token + "_ConnectionId");
 
-                //用groupId做组名
-                await this.Context.Groups.AddToGroupAsync(connectionId, groupName);
-                
-                //如果组不存在，则创建组
-                //如果组存在，则用新的组名覆盖旧的
-                //加入成员
-                await db.SetAddAsync($"{groupName}_Members", userId);
-            }
+            //用groupId做组名
+            await this.hubContext.Groups.AddToGroupAsync(connectionId, groupName);
+
+            //如果组不存在，则创建组
+            //如果组存在，则用新的组名覆盖旧的
+            //加入成员
+            await db.SetAddAsync($"{groupName}_Members", userId);
         }
     }
 }

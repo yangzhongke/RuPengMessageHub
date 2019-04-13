@@ -28,6 +28,7 @@
         </div>
     </div>
     <script>
+        var groupId = "668";
         var token = "@Html.Raw(ViewBag.token)";
         var chatClient = new ChatClient(token, "@msgHubServer");
         //axios全局设置url公共请求头
@@ -70,9 +71,9 @@
             mounted: function () {
                 chatClient.start().then(function () {
                     console.log("chatClient.start成功");
-                    joinGroup("666").then(function () {
+                    joinGroup(groupId).then(function () {
                         console.log("joinGroup成功");
-                        chatClient.getGroupMessages("666");
+                        chatClient.getGroupMessages(groupId);
                     }).catch(function (e) {
                         console.error("joinGroup失败" + e);
                     });
@@ -94,7 +95,7 @@
             {
                 sendMsg: function ()
                 {
-                    sendGroupMessage("666", "txt", this.msg);
+                    sendGroupMessage(groupId, "txt", this.msg);
                 }
             }
         });

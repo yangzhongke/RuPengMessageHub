@@ -1,31 +1,41 @@
-﻿using RuPengMessageHub.Models;
+﻿using Microsoft.Extensions.Configuration;
+using RuPengMessageHub.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace RuPengMessageHub.DAO
 {
     public class AppInfoDAO: IDAOSupport
     {
+        private IConfigurationRoot configRoot;
+        private List<AppInfo> appInfos = new List<AppInfo>();
+
+        public AppInfoDAO(IConfigurationRoot configRoot)
+        {
+            this.configRoot = configRoot;
+            var appInfosSec = configRoot.GetSection("AppInfos");
+            foreach (var appInfoSec in appInfosSec.GetChildren())
+            {
+                string id = appInfoSec.GetSection("Id").Value;
+                string appKey = appInfoSec.GetSection("AppKey").Value;
+                string appSecret = appInfoSec.GetSection("AppSecret").Value;
+                string appName = appInfoSec.GetSection("AppName").Value;
+                AppInfo info = new AppInfo
+                {
+                    Id = Guid.Parse(id),
+                    AppKey = appKey,
+                    AppSecret = appSecret,
+                    AppName = appName
+                };
+                appInfos.Add(info);
+            }
+        }
+
         public AppInfo[] GetAll()
         {
-            //暂时写死，以后搞到数据库中
-            AppInfo info1 = new AppInfo {
-                Id = Guid.Parse("6CEB02AB-925D-47DF-9547-2437B952A204"),
-                AppKey = "rupenggongkaike",
-                AppSecret = "faafasd333u_6xx!aa",
-                AppName = "如鹏公开课聊天室"
-
-            };
-            AppInfo info2 = new AppInfo
-            {
-                Id = Guid.Parse("6CEB02AB-925D-47DF-9547-2437B952A206"),
-                AppKey = "rupengIM",
-                AppSecret = "xmmx3@66_6xuu@aa",
-                AppName = "如鹏聊天软件"
-
-            };
-            AppInfo[] appInfos = new AppInfo[] { info1, info2 };
-            return appInfos;
+            //todo:以后搞到数据库中
+            return appInfos.ToArray();
         }
 
         public AppInfo GetByAppKey(string appKey)
