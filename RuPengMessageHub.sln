@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.421
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29025.244
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RuPengMessageHub.Server", "RuPengMessageHub.Server\RuPengMessageHub.Server.csproj", "{DD0AC595-9724-4D57-BE7A-DCD2AC273EEF}"
 EndProject
@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RuPengMessageHub.NetSDK", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RuPengMessageHub.Helpers", "RuPengMessageHub.Helpers\RuPengMessageHub.Helpers.csproj", "{E6C89407-D894-4245-8F8F-7F081A971B90}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HubServerLoadTest", "HubServerLoadTest\HubServerLoadTest.csproj", "{58638DF0-C967-4989-B085-A71781634C4B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HubServerLoadTest", "HubServerLoadTest\HubServerLoadTest.csproj", "{58638DF0-C967-4989-B085-A71781634C4B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
