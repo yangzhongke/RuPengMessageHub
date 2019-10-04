@@ -34,17 +34,18 @@ namespace RuPengMessageHub.DAO
 
         public AppInfo[] GetAll()
         {
-            //todo:以后搞到数据库中
+            //todo: stored in Database in the next version
             return appInfos.ToArray();
         }
 
         public AppInfo GetByAppKey(string appKey)
         {
-            //todo:以后如果要存到数据库里，一定要做好缓存，因为CheckAuthorizationFilter中在频繁调用
+            //todo: if those data will be stored in Database in the next version,
+            //cache must be added here, becuase CheckAuthorizationFilter will be invoked frequently
             var results = GetAll().Where(a => a.AppKey.Equals(appKey, StringComparison.OrdinalIgnoreCase));
             if(results.Count()>1)
             {
-                throw new ApplicationException("appKey有重复");
+                throw new ApplicationException("appKey duplicated");
             }
             else if(results.Count()<=0)
             {

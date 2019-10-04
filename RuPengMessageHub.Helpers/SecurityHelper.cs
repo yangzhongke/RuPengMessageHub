@@ -8,17 +8,17 @@ namespace RuPengMessageHub.Helpers
     {
         public static String GetHash(String input)
         {
-            //建立SHA1对象
+            //Create SHA1 Instance
             using (SHA1 sha = new SHA1CryptoServiceProvider())
             {
-                //将mystr转换成byte[]
+                //convert mystr into byte[]
                 UTF8Encoding enc = new UTF8Encoding();
                 byte[] dataToHash = enc.GetBytes(input);
 
-                //Hash运算
+                //Hash calculation
                 byte[] dataHashed = sha.ComputeHash(dataToHash);
 
-                //将运算结果转换成string
+                //convert byte[] into string
                 string hash = BitConverter.ToString(dataHashed).Replace("-", "");
 
                 return hash;

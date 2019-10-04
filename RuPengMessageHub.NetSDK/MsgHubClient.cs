@@ -16,7 +16,7 @@ namespace RuPengMessageHub.NetSDK
             
             if (!serverRoot.EndsWith("/"))
             {
-                throw new ArgumentException("域名需要以/结尾", nameof(serverRoot));
+                throw new ArgumentException("serverRoot must ends with /", nameof(serverRoot));
             }
             this.serverRoot = serverRoot;
             this.httpClientFactory = httpClientFactory;
@@ -44,7 +44,7 @@ namespace RuPengMessageHub.NetSDK
             }
             else
             {
-                throw new ApplicationException("响应错误" + resp.StatusCode);
+                throw new ApplicationException("Respond error" + resp.StatusCode);
             }
         }
 
@@ -70,7 +70,7 @@ namespace RuPengMessageHub.NetSDK
             }
             else
             {
-                throw new ApplicationException("响应错误" + resp.StatusCode);
+                throw new ApplicationException("Respond error" + resp.StatusCode);
             }
         }
 
@@ -94,7 +94,7 @@ namespace RuPengMessageHub.NetSDK
             }
             else
             {
-                throw new ApplicationException("响应错误" + resp.StatusCode);
+                throw new ApplicationException("Respond error" + resp.StatusCode);
             }
         }
     }

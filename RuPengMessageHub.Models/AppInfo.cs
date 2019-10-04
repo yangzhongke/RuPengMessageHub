@@ -2,6 +2,9 @@
 
 namespace RuPengMessageHub.Models
 {
+    /// <summary>
+    /// For Each Appliaction
+    /// </summary>
     public class AppInfo
     {
         public Guid Id { get; set; }
