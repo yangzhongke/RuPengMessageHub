@@ -70,15 +70,15 @@
             },
             mounted: function () {
                 chatClient.start().then(function () {
-                    console.log("chatClient.start成功");
+                    console.log("chatClient.start ok");
                     joinGroup(groupId).then(function () {
-                        console.log("joinGroup成功");
+                        console.log("joinGroup ok");
                         chatClient.getGroupMessages(groupId);
                     }).catch(function (e) {
-                        console.error("joinGroup失败" + e);
+                        console.error("joinGroup error" + e);
                     });
                 }).catch(function (e) {
-                    console.error("chatClient.start失败" + e);
+                    console.error("chatClient.start error" + e);
                 });
 
                 chatClient.setOnGroupMessageListener((msg) => {
