@@ -17,13 +17,13 @@ The settings, like UserId, AppKey, and AppSecret, must comply with that of appse
       "Id": "6CEB02AB-925D-47DF-9547-2437B952A204",
       "AppKey": "rupenggongkaike",
       "AppSecret": "wpstt@999_6xx!aa",
-      "AppName": "如鹏公开课聊天室"
+      "AppName": "Online chatroom for rupeng"
     },
     {
       "Id": "6CEB02AB-925D-47DF-9547-2437B952A206",
       "AppKey": "rupengIM",
       "AppSecret": "xx_3@66_6xx@aa",
-      "AppName": "如鹏聊天软件"
+      "AppName": "IM App of Rupeng"
     }
 ```
 
