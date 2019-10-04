@@ -6,7 +6,9 @@ RuPengMessageHub.Server is the core server, and all chat applications must conne
 RuPengMessageHub.TestWeb is an example of chat application.
 
 Before connection to the hubserver, a token should be retrieved using code bellow:
-`var token = await client.GetTokenAsync("1", "yzk", "rupenggongkaike", DateTime.Now.ToFileTime(), "wpstt@999_6xx!aa");
+```
+var token = await client.GetTokenAsync("1", "yzk", "rupenggongkaike", DateTime.Now.ToFileTime(), "wpstt@999_6xx!aa");
+```
 
 The settings, like UserId, AppKey, and AppSecret, must comply with that of appsettings.json in RuPengMessageHub.Server.
 ```
