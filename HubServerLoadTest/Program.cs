@@ -32,7 +32,7 @@ namespace HubServerLoadTest
             for(int i=0;i<500;i++)
             {
                 tasks.Add(StartOneClientAsync(i));
-                Console.WriteLine("任务启动"+i);
+                Console.WriteLine("Task Started"+i);
             }
 ;           Task.WaitAll(tasks.ToArray());
 
@@ -55,7 +55,7 @@ namespace HubServerLoadTest
 
             connection.Closed += async (error) =>
             {
-                Console.WriteLine("连接断开，尝试重连");
+                Console.WriteLine("connection is lost，retry connection");
                 await Task.Delay(2000);
                 await connection.StartAsync();
             };
@@ -72,18 +72,18 @@ namespace HubServerLoadTest
                     try
                     {
                         await client.SendGroupMessageAsync(token, chatRoomId, "txtMsg","["+Dns.GetHostName()+"]-"+Guid.NewGuid());
-                        Console.WriteLine("发送消息完成,taskId=" + taskId);
-                        await Task.Delay(rand.Next(20000, 50000));//不能用Thread.Sleep
+                        Console.WriteLine("Message is sent,taskId=" + taskId);
+                        await Task.Delay(rand.Next(20000, 50000));//don't use Thread.Sleep
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("发送消息失败, taskId = " + taskId + "," + ex);
+                        Console.WriteLine("Message is not sent successfully, taskId = " + taskId + "," + ex);
                     }
                 }
             }
             catch(Exception ex)
             {
-                Console.WriteLine($"启动任务失败，taskId=${taskId},${ex}");
+                Console.WriteLine($"Task is launched unsuccessfully，taskId=${taskId},${ex}");
             }
 
         }
